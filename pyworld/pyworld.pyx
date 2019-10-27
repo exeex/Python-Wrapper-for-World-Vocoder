@@ -13,9 +13,8 @@ cdef extern from "world/synthesis.h":
         int fft_size, double frame_period,
         int fs, int y_length, double *y) except +
 
-    void Synthesis_pulse(const double *f0,
-        int f0_length, const double * const *spectrogram,
-        const double * const *aperiodicity,
+    void Synthesis_pulse(const double *f0, int f0_length,
+        # const double * const *spectrogram, const double * const *aperiodicity,
         int fft_size, double frame_period,
         int fs, int y_length, double *y) except +
 
@@ -513,8 +512,9 @@ def synthesize_pulse(np.ndarray[double, ndim=1, mode="c"] f0 not None,
         cpp_spectrogram[i] = &spectrogram0[i, 0]
         cpp_aperiodicity[i] = &aperiodicity0[i, 0]
 
-    Synthesis_pulse(&f0[0], f0_length, cpp_spectrogram,
-        cpp_aperiodicity, fft_size, frame_period, fs, y_length, &y[0])
+    Synthesis_pulse(&f0[0], f0_length,
+                    # cpp_spectrogram,        cpp_aperiodicity,
+                    fft_size, frame_period, fs, y_length, &y[0])
     return y
 
 def get_num_aperiodicities(fs):
