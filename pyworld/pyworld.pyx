@@ -711,3 +711,11 @@ def wav2world(x, fs, fft_size=None, frame_period=default_frame_period):
     sp = cheaptrick(x, f0, t, fs, fft_size=fft_size)
     ap = d4c(x, f0, t, fs, fft_size=fft_size)
     return f0, sp, ap
+
+def fill_0hz(np.ndarray[double, ndim=1, mode="c"] f0):
+    zeros = np.where(f0 == 0.0)[0]
+    if zeros[1] == 0:
+        zeros = zeros[1:]
+    for zero_idx in zeros:
+        f0[zero_idx] = f0[zero_idx - 1]
+    return f0
