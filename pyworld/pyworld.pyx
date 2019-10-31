@@ -459,9 +459,7 @@ def synthesize(np.ndarray[double, ndim=1, mode="c"] f0 not None,
     return y
 
 def synthesize_pulse(np.ndarray[double, ndim=1, mode="c"] f0 not None,
-               np.ndarray[double, ndim=2, mode="c"] spectrogram not None,
-               np.ndarray[double, ndim=2, mode="c"] aperiodicity not None,
-               int fs,
+               int fs, fft_size=None, f0_floor=default_f0_floor,
                double frame_period=default_frame_period):
     """WORLD synthesis from parametric representation.
 
@@ -469,51 +467,45 @@ def synthesize_pulse(np.ndarray[double, ndim=1, mode="c"] f0 not None,
     ----------
     f0 : ndarray
         Input F0 contour.
-    spectrogram : ndarray
-        Spectral envelope.
-    aperiodicity : ndarray
-        Aperodicity envelope.
     fs : int
         Sample rate of input signal in Hz.
     frame_period : float
         Period between consecutive frames in milliseconds.
         Default: 5.0
+    fft_size: int, None
+        FFT size to be used. When `None` (default) is used, the FFT size is computed
+        automatically as a function of the given input sample rate and the default F0 floor.
+        When `fft_size` is specified, it should match the FFT size used to compute
+        the spectral envelope (i.e. `fft_size=2*(sp.shape[1] - 1)`) in order to get the
+        desired results when resynthesizing.
+        Default: None
+    f0_floor: float, None
+        Lower F0 limit in Hz. Not used in case `fft_size` is specified.
+        Default: 71.0
 
     Returns
     -------
     y : ndarray
         Output waveform signal.
     """
-    if (f0.shape[0] != spectrogram.shape[0] or
-        f0.shape[0] != aperiodicity.shape[0]):
-        raise ValueError('Mismatched number of frames between F0 ({:d}), '
-                         'spectrogram ({:d}) and aperiodicty ({:d})'
-                         .format(f0.shape[0], spectrogram.shape[0],
-                                 aperiodicity.shape[0]))
-    if spectrogram.shape[1] != aperiodicity.shape[1]:
-        raise ValueError('Mismatched dimensionality (spec size) between '
-                         'spectrogram ({:d}) and aperiodicity ({:d})'
-                         .format(spectrogram.shape[1], aperiodicity.shape[1]))
+
+    if fft_size is None:
+        fft_size = get_cheaptrick_fft_size(fs, f0_floor=f0_floor)
+
 
     cdef int f0_length = <int>len(f0)
     y_length = int(f0_length * frame_period * fs / 1000)
-    cdef int fft_size = (<int>spectrogram.shape[1] - 1)*2
+    # cdef int fft_size = (<int>spectrogram.shape[1] - 1)*2
+
     cdef np.ndarray[double, ndim=1, mode="c"] y = \
         np.zeros(y_length, dtype=np.dtype('float64'))
 
-    cdef double[:, ::1] spectrogram0 = spectrogram
-    cdef double[:, ::1] aperiodicity0 = aperiodicity
     cdef np.intp_t[:] tmp = np.zeros(f0_length, dtype=np.intp)
     cdef np.intp_t[:] tmp2 = np.zeros(f0_length, dtype=np.intp)
-    cdef double **cpp_spectrogram = <double**> (<void*> &tmp[0])
-    cdef double **cpp_aperiodicity = <double**> (<void*> &tmp2[0])
+
     cdef np.intp_t i
-    for i in range(f0_length):
-        cpp_spectrogram[i] = &spectrogram0[i, 0]
-        cpp_aperiodicity[i] = &aperiodicity0[i, 0]
 
     Synthesis_pulse(&f0[0], f0_length,
-                    # cpp_spectrogram,        cpp_aperiodicity,
                     fft_size, frame_period, fs, y_length, &y[0])
     return y
 
