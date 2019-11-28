@@ -13,6 +13,7 @@ cdef extern from "world/synthesis.h":
         int fft_size, double frame_period,
         int fs, int y_length, double *y) except +
 
+cdef extern from "synthesis_pulse.h":
     void Synthesis_pulse(const double *f0, int f0_length,
         # const double * const *spectrogram, const double * const *aperiodicity,
         int fft_size, double frame_period,

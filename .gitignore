@@ -1,5 +1,5 @@
 test/
-*.cpp
+pyworld.cpp
 *.pyd
 .pypirc
 .vscode
@@ -22,7 +22,6 @@ develop-eggs/
 dist/
 downloads/
 eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -193,7 +192,6 @@ Temporary Items
 # Linux trash folder which might appear on any partition or disk
 .Trash-*
 test/
-*.cpp
 *.pyd
 .pypirc
 .vscode
@@ -216,7 +214,6 @@ develop-eggs/
 dist/
 downloads/
 eggs/
-lib/
 lib64/
 parts/
 sdist/

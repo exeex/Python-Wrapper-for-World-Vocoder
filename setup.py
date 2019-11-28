@@ -32,11 +32,12 @@ class build_ext(_build_ext):
 
 world_src_top = join("lib", "World", "src")
 world_sources = glob(join(world_src_top, "*.cpp"))
+world_sources += glob(join("lib", "synthesis_pulse.cpp"))
 
 ext_modules = [
     Extension(
         name="pyworld.pyworld",
-        include_dirs=[world_src_top],
+        include_dirs=[world_src_top, "lib"],
         sources=[join("pyworld", "pyworld.pyx")] + world_sources,
         language="c++")]
 
