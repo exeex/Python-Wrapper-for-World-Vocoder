@@ -6,7 +6,6 @@ aperiodicity and spectral envelope and also generate the speech like input speec
 with only estimated parameters.
 """
 
-
 from __future__ import with_statement, print_function, absolute_import
 
 from setuptools import setup, find_packages, Extension
@@ -17,7 +16,6 @@ from glob import glob
 from os.path import join
 
 from setuptools.command.build_ext import build_ext as _build_ext
-
 
 DOCLINES = __doc__.split('\n')
 _VERSION = '0.2.9'
