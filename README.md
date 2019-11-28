@@ -59,6 +59,10 @@ pip install .
 #!!! MacOS install!!!
 ```bash
 CFLAGS='-stdlib=libc++' python setup.py install
+# or
+CFLAGS='-stdlib=libc++' python setup.py develop
+# or
+CFLAGS='-stdlib=libc++' python setup.py build_ext --inplace
 ```
 
 It will automatically `git clone` Morise's World Vocoder (C++ version).<br/>

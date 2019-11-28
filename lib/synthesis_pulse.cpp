@@ -135,3 +135,46 @@ void Synthesis_pulse(const double *f0, int f0_length,
   delete[] pulse_locations_time_shift;
   delete[] interpolated_vuv;
 }
+
+void Synthesis_pulse_new(const double *f0, int f0_length, int f_n,
+    int fft_size, double frame_period, int fs, int y_length, int *y) {
+
+  // multiple f0 by f_n
+
+  double * fz = new double[f0_length];
+
+  for (int i = 0; i < f0_length; ++i) fz[i] = f0[i]*f_n;
+
+  // init y
+  for (int i = 0; i < y_length; ++i) y[i] = 0;
+
+  // make fn one-hot
+  if(f_n < 0 || f_n > 32) return; // check 0 < f_n < 32
+  int f_n_one_hot[32];
+  for(int i=0; i<32; i++) f_n_one_hot[i] = 1 << i;
+
+
+  double *pulse_locations = new double[y_length];
+  int *pulse_locations_index = new int[y_length];
+  double *pulse_locations_time_shift = new double[y_length];
+  double *interpolated_vuv = new double[y_length];
+  int number_of_pulses = GetTimeBase(fz, f0_length, fs, frame_period / 1000.0,
+      y_length, fs / fft_size + 1.0, pulse_locations, pulse_locations_index,
+      pulse_locations_time_shift, interpolated_vuv);
+
+
+  frame_period /= 1000.0;
+  int noise_size;
+  int index, offset, lower_limit, upper_limit;
+  for (int i = 0; i < number_of_pulses; ++i) {
+
+    offset = pulse_locations_index[i] - fft_size / 2 + 1;
+
+    if(0<=offset && offset < y_length)    y[offset] = f_n_one_hot[i % f_n];
+  }
+
+  delete[] pulse_locations;
+  delete[] pulse_locations_index;
+  delete[] pulse_locations_time_shift;
+  delete[] interpolated_vuv;
+}

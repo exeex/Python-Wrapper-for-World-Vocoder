@@ -34,7 +34,7 @@ def main():
     # y_pulse = pw.synthesize_pulse(f0, sp, ap, fs, pw.default_frame_period)
 
     # y_pulse = pw.synthesize_pulse(f0, fs, frame_period=pw.default_frame_period)
-    y_pulse = pw.synthesize_pulse(pw.fill_0hz(f0), fs, fft_size=1024, frame_period=pw.default_frame_period)
+    y_pulse = pw.synthesize_pulse_new(pw.fill_0hz(f0), fs, fft_size=1024, frame_period=pw.default_frame_period)
     print(sp.shape)
     print('Please check "test" directory for output files')
     return y_pulse, f0

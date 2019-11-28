@@ -1,6 +1,7 @@
 test/
 pyworld.cpp
 *.pyd
+.idea
 .pypirc
 .vscode
 

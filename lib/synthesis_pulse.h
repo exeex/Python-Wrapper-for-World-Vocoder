@@ -8,5 +8,7 @@ void Synthesis_pulse(const double *f0, int f0_length,
 //    const double * const *spectrogram, const double * const *aperiodicity,
     int fft_size, double frame_period, int fs, int y_length, double *y);
 
+void Synthesis_pulse_new(const double *f0, int f0_length, int f_n,
+    int fft_size, double frame_period, int fs, int y_length, int *y);
 
 #endif

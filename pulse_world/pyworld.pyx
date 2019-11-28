@@ -18,6 +18,8 @@ cdef extern from "synthesis_pulse.h":
         # const double * const *spectrogram, const double * const *aperiodicity,
         int fft_size, double frame_period,
         int fs, int y_length, double *y) except +
+    void Synthesis_pulse_new(const double *f0, int f0_length, int f_n,
+    int fft_size, double frame_period, int fs, int y_length, int *y) except +
 
 
 cdef extern from "world/cheaptrick.h":
@@ -507,6 +509,58 @@ def synthesize_pulse(np.ndarray[double, ndim=1, mode="c"] f0 not None,
     cdef np.intp_t i
 
     Synthesis_pulse(&f0[0], f0_length,
+                    fft_size, frame_period, fs, y_length, &y[0])
+    return y
+
+def synthesize_pulse_new(np.ndarray[double, ndim=1, mode="c"] f0 not None,
+               int fs, int f_n =12, fft_size=None, f0_floor=default_f0_floor,
+               double frame_period=default_frame_period):
+    """WORLD synthesis from parametric representation.
+
+    Parameters
+    ----------
+    f0 : ndarray
+        Input F0 contour.
+    fs : int
+        Sample rate of input signal in Hz.
+    frame_period : float
+        Period between consecutive frames in milliseconds.
+        Default: 5.0
+    fft_size: int, None
+        FFT size to be used. When `None` (default) is used, the FFT size is computed
+        automatically as a function of the given input sample rate and the default F0 floor.
+        When `fft_size` is specified, it should match the FFT size used to compute
+        the spectral envelope (i.e. `fft_size=2*(sp.shape[1] - 1)`) in order to get the
+        desired results when resynthesizing.
+        Default: None
+    f0_floor: float, None
+        Lower F0 limit in Hz. Not used in case `fft_size` is specified.
+        Default: 71.0
+
+    Returns
+    -------
+    y : ndarray
+        Output waveform signal.
+    """
+
+    if fft_size is None:
+        fft_size = get_cheaptrick_fft_size(fs, f0_floor=f0_floor)
+
+
+    cdef int f0_length = <int>len(f0)
+    y_length = int(f0_length * frame_period * fs / 1000)
+    # cdef int fft_size = (<int>spectrogram.shape[1] - 1)*2
+
+    cdef np.ndarray[int, ndim=1, mode="c"] y = \
+        np.zeros(y_length, dtype=np.dtype('int32'))
+
+    cdef np.intp_t[:] tmp = np.zeros(f0_length, dtype=np.intp)
+    cdef np.intp_t[:] tmp2 = np.zeros(f0_length, dtype=np.intp)
+
+    cdef np.intp_t i
+
+
+    Synthesis_pulse_new(&f0[0], f0_length, f_n,
                     fft_size, frame_period, fs, y_length, &y[0])
     return y
 
