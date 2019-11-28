@@ -42,7 +42,7 @@ ext_modules = [
         language="c++")]
 
 setup(
-    name="pyworld",
+    name="pyworld_pulse",
     description=DOCLINES,
     long_description='\n'.join(DOCLINES[2:]),
     ext_modules=ext_modules,
