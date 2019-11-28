@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 import soundfile as sf
 # import librosa
-import pyworld_mod.pyworld as pw
+import pulse_world.pyworld as pw
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--frame_period", type=float, default=5.0)

@@ -34,13 +34,13 @@ world_sources += glob(join("lib", "synthesis_pulse.cpp"))
 
 ext_modules = [
     Extension(
-        name="pyworld.pyworld",
+        name="pulse_world.pyworld",
         include_dirs=[world_src_top, "lib"],
-        sources=[join("pyworld", "pyworld.pyx")] + world_sources,
+        sources=[join("pulse_world", "pyworld.pyx")] + world_sources,
         language="c++")]
 
 setup(
-    name="pyworld_pulse",
+    name="pulse_world",
     description=DOCLINES,
     long_description='\n'.join(DOCLINES[2:]),
     ext_modules=ext_modules,
